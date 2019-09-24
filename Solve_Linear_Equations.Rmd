@@ -1,0 +1,90 @@
+---
+title: "LLP Assignment 2"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Problem Statement
+
+Graph each of the following constraint equations in R. You do not need to shade feasible regions.
+A. x + y ≥ 4, x + y ≤ 2
+B. x + y ≤ 2, x - y ≤ 1
+
+
+### Load Package
+```{r}
+
+if(!require("ggplot2")){install.packages("ggplot2")}
+
+```
+
+### Problem A
+```{r}
+### Solving A, x + y ≥ 4 , x + y ≤ 2
+###            y ≥ -x + 4, y ≥ -x + 2 
+
+fun1 = function(x) -1*x + 4      ## y1
+fun2 = function(x) -1*x + 2      ## y2
+
+
+#Create range of x values
+x=seq(0,10)
+
+#Plug x values into constraint functions
+mydf = data.frame(x, y1=fun1(x), y2=fun2(x))
+
+#Plot functions
+g = ggplot(mydf, aes(x = x)) + 
+  geom_line(aes(y = y1), colour = 'blue') +
+  geom_line(aes(y = y2), colour = 'green')+ 
+  geom_ribbon(aes(ymin=y1, ymax=y2),fill='gray80')
+g
+
+
+```
+
+#### Solution of A is feasible but unbounded
+
+
+### Problem B
+```{r}
+### Solving B, x + y ≤ 2 ,  x - y ≤ 1
+###            y ≤ -x + 2,  y >= x - 1
+
+fun1 = function(x) -1*x + 2      ## y1
+fun2 = function(x) x - 1         ## y2
+
+
+#Create range of x values
+x=seq(0,10, by = 0.05)   # x=seq(0,10) will not give correct region as pmin(y1, y2) values will be discrete
+
+
+
+#Plug x values into constraint functions
+mydf = data.frame(x, y1=fun1(x), y2=fun2(x))
+head(mydf)
+#Plot functions
+g = ggplot(mydf, aes(x = x)) + 
+  geom_line(aes(y = y1), colour = 'blue') +
+  geom_line(aes(y = y2), colour = 'green')+ 
+  geom_ribbon(aes(ymin=y1, ymax=y2),fill='gray80')
+g
+
+# Correcting the area shaded
+mydf1 = transform(mydf, z = pmin(y1,y2))
+head(mydf1)
+g1 = ggplot(mydf1, aes(x = x)) + 
+  geom_line(aes(y = y1), colour = 'blue') +
+  geom_line(aes(y = y2), colour = 'green')+
+  geom_ribbon(aes(ymin=y1, ymax=z),fill='gray80')
+g1
+
+```
+
+#### Solution of B is feasible and unbounded
+
